@@ -1,7 +1,9 @@
 const express = require("express");
 const cors = require("cors");
-const app = express();
+const apierror = require("./app/api-errors");
 const contactsRouter = require("./app/routers/contactrouter");
+const app = express();
+
 
 app.use(cors());
 app.use(express.json()); //content-type la json thi okie
@@ -12,6 +14,14 @@ app.get("/", (req, res) => {
     });
 })
 
+app.use((req, res, next) => {
+    return next(new apierror(404, "resource not found"));
+});
+app.use((err, req, res, next) => {
+    return res.status(error.statusCode || 500).json({
+        message: error.message || "Interal Server error",
+    });
+});
 app.get("/hello", (req, res) => {
     res.json({
         message: "welcpplication."
